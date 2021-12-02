@@ -37,6 +37,7 @@ func main() {
 			if err := jobQueue.Remove(msg); err != nil {
 				l.Error().Err(err).Str("url", v.URL).Msg("remove message from sqs error")
 			}
+			l.Info().Str("url", v.URL).Msg("complete")
 		}
 	}()
 
