@@ -1,7 +1,7 @@
-resource "kubernetes_stateful_set" "app" {
+resource "kubernetes_deployment" "app" {
   depends_on = [
     kubernetes_secret.secret-docker-registry,
-    kubernetes_secret.app
+    kubernetes_secret.app,
   ]
 
   metadata {
@@ -11,8 +11,7 @@ resource "kubernetes_stateful_set" "app" {
   }
 
   spec {
-    replicas     = 1
-    service_name = var.name
+    replicas = var.deployment.replicas
 
     selector {
       match_labels = local.labels
@@ -29,8 +28,8 @@ resource "kubernetes_stateful_set" "app" {
         }
 
         container {
-          name = local.container_name
-          image = join(":", [
+          name              = "app"
+          image             = join(":", [
             var.image.name,
             var.image.tag
           ])
