@@ -5,7 +5,9 @@ import (
 	"os"
 	"os/signal"
 	"syscall"
+
 	"github.com/google/uuid"
+	"gitlab.com/dreamteam-hack/hack041221/telegram-bot/pkg/types"
 )
 
 func main() {
@@ -22,7 +24,7 @@ func main() {
 				continue
 			}
 
-			v := &JobMessage{}
+			v := &types.JobMessage{}
 			if err := json.Unmarshal([]byte(*msg.Body), v); err != nil {
 				l.Error().Err(err)
 				continue

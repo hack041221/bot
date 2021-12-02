@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/rs/zerolog/log"
+	"gitlab.com/dreamteam-hack/hack041221/telegram-bot/pkg/types"
 	tb "gopkg.in/tucnak/telebot.v2"
 )
 
@@ -31,7 +32,7 @@ type bot struct {
 }
 
 func (b *bot) handleState(msg []byte) error {
-	s := &msgPayload{}
+	s := &types.StateMessage{}
 	if err := json.Unmarshal(msg, s); err != nil {
 		return err
 	}
@@ -42,9 +43,17 @@ func (b *bot) handleState(msg []byte) error {
 		Chat: &tb.Chat{ID: s.ChatID},
 	}
 
-	if _, err := b.tbot.Reply(replyRecipient, fmt.Sprintf("Видео готово: %s", s.VideoURL)); err != nil {
-		log.Error().Err(err).Msgf("failed to send reply %s", s.VideoURL)
+	var replyMsg string
+	if len(s.Error) > 0 {
+		replyMsg = fmt.Sprintf("Произошла ошибка при обработке видео: %s", s.Error)
+		log.Info().Msgf(replyMsg)
+	} else {
+		replyMsg = fmt.Sprintf("Видео готово: %s", s.URL)
 	}
+	if _, err := b.tbot.Reply(replyRecipient, replyMsg); err != nil {
+		log.Error().Err(err).Msgf("failed to send reply %s", s.URL)
+	}
+
 	return nil
 }
 
@@ -82,21 +91,31 @@ func (b *bot) Init() error {
 }
 
 func (b *bot) handleText(m *tb.Message) {
-	for _, l := range hasYoutubeLink(m.Text) {
-		msg := fmt.Sprintf("Обнаружено youtube видео (%s), начата обработка", l)
-		if _, err := b.tbot.Reply(m, msg); err != nil {
-			log.Error().Err(err).Msg("Не удалось отправить уведомление")
-		}
+	// 	for _, l := range hasYoutubeLink(m.Text) {
+	// 		msg := fmt.Sprintf("Обнаружено youtube видео (%s), начата обработка", l)
+	// 		if _, err := b.tbot.Reply(m, msg); err != nil {
+	// 			log.Error().Err(err).Msg("Не удалось отправить уведомление")
+	// 		}
 
-		payload := &youtubePayload{
-			ChatID:    m.Chat.ID,
-			MessageID: m.ID,
-			VideoURL:  l,
-		}
-		if err := b.q.Send(b.jobUri, payload); err != nil {
-			log.Error().Err(err).Msg("failed to upload video file")
-			return
-		}
+	// 		payload := &youtubePayload{
+	// 			ChatID:    m.Chat.ID,
+	// 			MessageID: m.ID,
+	// 			VideoURL:  l,
+	// 		}
+	// 		if err := b.q.Send(b.jobUri, payload); err != nil {
+	// 			log.Error().Err(err).Msg("failed to upload video file")
+	// 			return
+	// 		}
+	// 	}
+
+	payload := &types.JobMessage{
+		ChatID:    m.Chat.ID,
+		MessageID: m.ID,
+		URL:       m.Text,
+	}
+	if err := b.q.Send(b.jobUri, payload); err != nil {
+		log.Error().Err(err).Msg("failed to upload video file")
+		return
 	}
 }
 
@@ -118,10 +137,10 @@ func (b *bot) handleUpload(m *tb.Message, f *tb.File) {
 		log.Error().Err(err).Msg("Не удалось отправить уведомление")
 	}
 
-	payload := &msgPayload{
+	payload := &types.JobMessage{
 		ChatID:    m.Chat.ID,
 		MessageID: m.ID,
-		VideoURL:  filePath,
+		URL:       filePath,
 	}
 	if err := b.q.Send(b.jobUri, payload); err != nil {
 		log.Error().Err(err).Msg("failed to upload video file")
