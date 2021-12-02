@@ -1,0 +1,8 @@
+#################################################### build
+
+docker-build:
+  extends: .build-template-buildkit
+  variables:
+    DOCKERIGNORE: $CI_PROJECT_DIR/.dockerignore
+    DOCKER_FILE: $CI_PROJECT_DIR/Dockerfile
+    DESTINATION: app

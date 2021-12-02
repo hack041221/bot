@@ -1,0 +1,20 @@
+#################################################### variables
+
+variables:
+  GO_IMAGE: golang:1.17.3-alpine3.14
+  PROD_NAMESPACE: hack041221
+
+#################################################### includes
+
+include:
+  - local: .gitlab/build/template.yaml
+  - local: .gitlab/build/build.yaml
+  - local: .gitlab/deploy/template.yaml
+  - local: .gitlab/deploy/prod.yaml
+
+#################################################### stages
+
+stages:
+  - build
+  - plan
+  - deploy

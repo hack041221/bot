@@ -1,0 +1,27 @@
+#################################################### build template
+
+.build-template-buildkit:
+  stage: build
+  image:
+    name: moby/buildkit:rootless
+    entrypoint: [ "sh", "-c" ]
+  variables:
+    BUILDCTL_CONNECT_RETRIES_MAX: 30
+    BUILDKITD_FLAGS: --oci-worker-no-process-sandbox
+  before_script:
+    - mkdir ~/.docker
+    - echo "{\"auths\":{\"$CI_REGISTRY\":{\"username\":\"$CI_REGISTRY_USER\",\"password\":\"$CI_REGISTRY_PASSWORD\"}}}" > $HOME/.docker/config.json
+  script:
+    - rm -rf .dockerignore && cp $DOCKERIGNORE .dockerignore || true
+    - cp $DOCKER_FILE Dockerfile || true
+    - |
+      buildctl-daemonless.sh build \
+          --progress=plain \
+          --frontend=dockerfile.v0 \
+          --local context=. \
+          --local dockerfile=. \
+          --opt build-arg:IMAGE_TAG=$CI_COMMIT_SHORT_SHA \
+          --opt build-arg:CI_COMMIT_SHA=$CI_COMMIT_SHA \
+          --import-cache type=registry,ref=$CI_REGISTRY_IMAGE/$DESTINATION:$CI_COMMIT_REF_SLUG-buildcache \
+          --export-cache type=registry,ref=$CI_REGISTRY_IMAGE/$DESTINATION:$CI_COMMIT_REF_SLUG-buildcache,push=true \
+          --output type=image,\"name=$CI_REGISTRY_IMAGE/$DESTINATION:$CI_COMMIT_REF_SLUG,$CI_REGISTRY_IMAGE/$DESTINATION:$CI_COMMIT_SHORT_SHA\",push=true

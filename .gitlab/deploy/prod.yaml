@@ -1,0 +1,35 @@
+.deploy-prod-template:
+  extends: .deploy-template
+  variables:
+    TF_VAR_slug: prod
+    TF_VAR_namespace: $PROD_NAMESPACE
+  rules:
+    - if: $CI_COMMIT_TAG
+      when: never
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+  environment:
+    url: https://$PROD_DOMAIN
+    name: prod
+
+plan-prod:
+  extends: .deploy-prod-template
+  stage: plan
+  resource_group: prod
+  script:
+    - gitlab-terraform plan
+    - gitlab-terraform plan-json
+  artifacts:
+    name: plan
+    paths:
+      - ${TF_ROOT}/plan.cache
+    reports:
+      terraform: ${TF_ROOT}/plan.json
+
+deploy_prod:
+  extends: .deploy-prod-template
+  stage: deploy
+  resource_group: prod
+  needs:
+    - plan-prod
+  script:
+    - gitlab-terraform apply -auto-approve
