@@ -2,10 +2,10 @@ package main
 
 import (
 	"encoding/json"
+	"github.com/google/uuid"
 	"os"
 	"os/signal"
 	"syscall"
-	"github.com/google/uuid"
 )
 
 func main() {
@@ -31,6 +31,9 @@ func main() {
 			if err := process(v, uuid.New()); err != nil {
 				l.Error().Err(err).Str("url", v.URL).Msg("process error")
 				stateErrorReply(v, err)
+			}
+			if err := jobQueue.Remove(msg); err != nil {
+				l.Error().Err(err).Str("url", v.URL).Msg("remove message from sqs error")
 			}
 		}
 	}()
