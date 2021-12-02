@@ -36,12 +36,12 @@ variable "deployment" {
 
 variable "app" {
   type = object({
-    telegram_token        = string
-    aws_secret_access_key = string
-    aws_access_key_id     = string
-    aws_region            = string
-    aws_bucket            = string
-    job_url               = string
-    state_url             = string
+    telegram_token = string
+    aws_secret_key = string
+    aws_access_key = string
+    aws_region     = string
+    aws_bucket     = string
+    job_url        = string
+    state_url      = string
   })
 }
