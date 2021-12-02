@@ -4,7 +4,7 @@ module "bot" {
   slug            = var.slug
   docker-registry = local.docker-registry
   image           = {
-    name = "${var.image}/app"
+    name = "${var.image}/bot"
     tag  = var.image_version
   }
   name            = "bot"
