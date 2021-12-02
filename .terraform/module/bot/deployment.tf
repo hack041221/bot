@@ -1,7 +1,7 @@
-resource "kubernetes_deployment" "app" {
+resource "kubernetes_stateful_set" "app" {
   depends_on = [
     kubernetes_secret.secret-docker-registry,
-    kubernetes_secret.app,
+    kubernetes_secret.app
   ]
 
   metadata {
@@ -11,7 +11,8 @@ resource "kubernetes_deployment" "app" {
   }
 
   spec {
-    replicas = var.deployment.replicas
+    replicas     = 1
+    service_name = var.name
 
     selector {
       match_labels = local.labels
@@ -20,9 +21,6 @@ resource "kubernetes_deployment" "app" {
     template {
       metadata {
         labels = local.labels
-        annotations = {
-          "checksum/secrets" = filesha256("${path.module}/secret-app.tf")
-        }
       }
 
       spec {
