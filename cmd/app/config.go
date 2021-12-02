@@ -9,8 +9,8 @@ import (
 
 type cfg struct {
 	BotToken     string `env:"TELEGRAM_TOKEN"`
-	AwsSecretKey string `env:"AWS_SECRET_ACCESS_KEY"`
-	AwsAccessKey string `env:"AWS_ACCESS_KEY_ID"`
+	AwsSecretKey string `env:"AWS_SECRET_KEY"`
+	AwsAccessKey string `env:"AWS_ACCESS_KEY"`
 	AwsRegion    string `env:"AWS_REGION"`
 	AwsBucket    string `env:"AWS_BUCKET"`
 	JobURL       string `env:"JOB_URL"`
