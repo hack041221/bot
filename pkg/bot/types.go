@@ -5,3 +5,9 @@ type msgPayload struct {
 	MessageID int    `json:"message_id"`
 	VideoURL  string `json:"video_url"`
 }
+
+type youtubePayload struct {
+	ChatID    int64  `json:"chat_id"`
+	MessageID int    `json:"message_id"`
+	VideoURL  string `json:"video_url"`
+}

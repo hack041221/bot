@@ -32,7 +32,7 @@ func main() {
 
 	u := bot.NewUploader(c.AwsBucket, sess)
 	q := bot.NewQueue(sqs.New(sess))
-	b := bot.NewBot(c.BotToken, c.JobURL, c.StateURL, q, u)
+	b := bot.NewBot(c.BotToken, c.JobURL, c.StateURL, c.YoutubeURL, q, u)
 	if err := b.Init(); err != nil {
 		log.Fatal().Err(err).Msg("failed to init telegram bot")
 	}

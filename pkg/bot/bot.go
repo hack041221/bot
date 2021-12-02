@@ -9,23 +9,25 @@ import (
 	tb "gopkg.in/tucnak/telebot.v2"
 )
 
-func NewBot(token, jobUri, stateUri string, q *queue, u *uploader) *bot {
+func NewBot(token, jobUri, stateUri, youtubeUri string, q *queue, u *uploader) *bot {
 	return &bot{
-		token:    token,
-		q:        q,
-		u:        u,
-		stateUri: stateUri,
-		jobUri:   jobUri,
+		token:      token,
+		q:          q,
+		u:          u,
+		stateUri:   stateUri,
+		jobUri:     jobUri,
+		youtubeUri: youtubeUri,
 	}
 }
 
 type bot struct {
-	stateUri string
-	jobUri   string
-	token    string
-	q        *queue
-	u        *uploader
-	tbot     *tb.Bot
+	stateUri   string
+	jobUri     string
+	youtubeUri string
+	token      string
+	q          *queue
+	u          *uploader
+	tbot       *tb.Bot
 }
 
 func (b *bot) handleState(msg []byte) error {
@@ -49,6 +51,9 @@ func (b *bot) handleState(msg []byte) error {
 func (b *bot) Listen() {
 	go b.q.Listen(b.stateUri, b.handleState)
 
+	b.tbot.Handle(tb.OnText, func(m *tb.Message) {
+		b.handleText(m)
+	})
 	b.tbot.Handle(tb.OnVideo, func(m *tb.Message) {
 		b.handleUpload(m, &m.Video.File)
 	})
@@ -74,6 +79,25 @@ func (b *bot) Init() error {
 	}
 	b.tbot = tbot
 	return nil
+}
+
+func (b *bot) handleText(m *tb.Message) {
+	for _, l := range hasYoutubeLink(m.Text) {
+		payload := &youtubePayload{
+			ChatID:    m.Chat.ID,
+			MessageID: m.ID,
+			VideoURL:  l,
+		}
+		if err := b.q.Send(b.jobUri, payload); err != nil {
+			log.Error().Err(err).Msg("failed to upload video file")
+			return
+		}
+
+		msg := fmt.Sprintf("Обнаружено youtube видео (%s), начата обработка", l)
+		if _, err := b.tbot.Reply(m, msg); err != nil {
+			log.Error().Err(err).Msg("Не удалось отправить уведомление")
+		}
+	}
 }
 
 func (b *bot) handleUpload(m *tb.Message, f *tb.File) {

@@ -15,6 +15,7 @@ type cfg struct {
 	AwsBucket    string `env:"AWS_BUCKET"`
 	JobURL       string `env:"JOB_URL"`
 	StateURL     string `env:"STATE_URL"`
+	YoutubeURL   string `env:"YOUTUBE_URL"`
 }
 
 func LoadConfig(cfg interface{}, fileNames ...string) {
