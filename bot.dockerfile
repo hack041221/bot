@@ -15,7 +15,7 @@ COPY go.mod .
 COPY go.sum .
 RUN go mod download
 COPY . .
-RUN make build
+RUN make build-bot
 
 FROM alpine:3.13.2
 WORKDIR /app/

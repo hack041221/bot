@@ -5,6 +5,8 @@ variable "aws_region" { type = string }
 variable "aws_bucket" { type = string }
 variable "job_url" { type = string }
 variable "state_url" { type = string }
+variable "audio_url" { type = string }
+variable "frame_url" { type = string }
 
 variable "slug" { type = string }
 variable "image" { type = string }

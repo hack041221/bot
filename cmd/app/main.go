@@ -7,12 +7,13 @@ import (
 	"github.com/aws/aws-sdk-go/service/sqs"
 	"github.com/rs/zerolog/log"
 	"gitlab.com/dreamteam-hack/hack041221/telegram-bot/pkg/bot"
+	"gitlab.com/dreamteam-hack/hack041221/telegram-bot/pkg/config"
 )
 
 var c = new(cfg)
 
 func init() {
-	LoadConfig(c)
+	config.LoadConfig(c)
 }
 
 func createSess(c *cfg) (*session.Session, error) {

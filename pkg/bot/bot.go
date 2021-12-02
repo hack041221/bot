@@ -83,6 +83,11 @@ func (b *bot) Init() error {
 
 func (b *bot) handleText(m *tb.Message) {
 	for _, l := range hasYoutubeLink(m.Text) {
+		msg := fmt.Sprintf("Обнаружено youtube видео (%s), начата обработка", l)
+		if _, err := b.tbot.Reply(m, msg); err != nil {
+			log.Error().Err(err).Msg("Не удалось отправить уведомление")
+		}
+
 		payload := &youtubePayload{
 			ChatID:    m.Chat.ID,
 			MessageID: m.ID,
@@ -91,11 +96,6 @@ func (b *bot) handleText(m *tb.Message) {
 		if err := b.q.Send(b.jobUri, payload); err != nil {
 			log.Error().Err(err).Msg("failed to upload video file")
 			return
-		}
-
-		msg := fmt.Sprintf("Обнаружено youtube видео (%s), начата обработка", l)
-		if _, err := b.tbot.Reply(m, msg); err != nil {
-			log.Error().Err(err).Msg("Не удалось отправить уведомление")
 		}
 	}
 }

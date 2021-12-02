@@ -1,8 +1,15 @@
 #################################################### build
 
-docker-build:
+build-bot:
   extends: .build-template-buildkit
   variables:
     DOCKERIGNORE: $CI_PROJECT_DIR/.dockerignore
-    DOCKER_FILE: $CI_PROJECT_DIR/Dockerfile
-    DESTINATION: app
+    DOCKER_FILE: $CI_PROJECT_DIR/bot.dockerfile
+    DESTINATION: bot
+
+build-downloader:
+  extends: .build-template-buildkit
+  variables:
+    DOCKERIGNORE: $CI_PROJECT_DIR/.dockerignore
+    DOCKER_FILE: $CI_PROJECT_DIR/downloader.dockerfile
+    DESTINATION: downloader
