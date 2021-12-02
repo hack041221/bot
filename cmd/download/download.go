@@ -22,7 +22,7 @@ type Downloader struct {
 
 func (dl *Downloader) download(url, filename string) error {
 	startTime := time.Now()
-	l.Info().Msgf("Going to download %s from %s", filename, url)
+	l.Info().Msgf("download %s => %s", url, filename)
 	resp, err := dl.client.Head(url)
 	if err != nil {
 		return err

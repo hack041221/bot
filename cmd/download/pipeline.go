@@ -19,7 +19,7 @@ func process(v *JobMessage, uid uuid.UUID) error {
 			Error().
 			Err(err).
 			Msg("ioutil.TempFile")
-		panic(err)
+		return err
 	}
 	defer os.RemoveAll(videoDir)
 
@@ -27,13 +27,13 @@ func process(v *JobMessage, uid uuid.UUID) error {
 	l.Debug().Str("path", f).Msg("temporary file")
 
 	if err := downloader.download(v.URL, f); err != nil {
-		panic(err)
+		return err
 	}
 
 	frameDir, err := ioutil.TempDir(os.TempDir(), "prefix")
 	if err != nil {
 		l.Error().Err(err).Msg("ioutil.TempDir")
-		panic(err)
+		return err
 	}
 	defer os.RemoveAll(frameDir)
 
