@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
-	"path"
+	"path/filepath"
 	"sync"
 
 	"github.com/aws/aws-sdk-go/aws"
@@ -25,14 +25,14 @@ func process(v *types.JobMessage, uid uuid.UUID) error {
 	}
 	defer os.RemoveAll(videoDir)
 
-	f := fmt.Sprintf("%s/%s", videoDir, path.Base(v.URL))
+	f := fmt.Sprintf("%s/%s", videoDir, filepath.Base(v.URL))
 	l.Debug().Str("path", f).Msg("temporary file")
 
 	if err := downloader.download(v.URL, f); err != nil {
 		return err
 	}
 
-	frameDir, err := ioutil.TempDir(os.TempDir(), "prefix")
+	frameDir, err := ioutil.TempDir(os.TempDir(), "frame")
 	if err != nil {
 		l.Error().Err(err).Msg("ioutil.TempDir")
 		return err
@@ -65,7 +65,7 @@ func process(v *types.JobMessage, uid uuid.UUID) error {
 				log.Error().Err(err).Msg("os.Open")
 				continue
 			}
-			uploadKey := fmt.Sprintf("%s/%s", uploadDir, path.Base(fi.Name()))
+			uploadKey := fmt.Sprintf("%s/%s", uploadDir, filepath.Base(fi.Name()))
 			objects = append(objects, s3manager.BatchUploadObject{
 				Object: &s3manager.UploadInput{
 					Key:    aws.String(uploadKey),
@@ -109,7 +109,7 @@ func process(v *types.JobMessage, uid uuid.UUID) error {
 			wg.Done()
 			return
 		}
-		uploadKey := fmt.Sprintf("audio/%s/%s", uid.String(), path.Base(audioDst))
+		uploadKey := fmt.Sprintf("audio/%s/%s", uid.String(), filepath.Base(audioDst))
 
 		if _, err := uploader.Upload(&s3manager.UploadInput{
 			Bucket: aws.String(c.AwsBucket),
