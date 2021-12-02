@@ -1,4 +1,4 @@
-package main
+package types
 
 type StateMessage struct {
 	ChatID    int64  `json:"chat_id"`

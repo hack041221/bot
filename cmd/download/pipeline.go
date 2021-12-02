@@ -2,17 +2,19 @@ package main
 
 import (
 	"fmt"
-	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/service/s3/s3manager"
-	"github.com/google/uuid"
-	"github.com/rs/zerolog/log"
 	"io/ioutil"
 	"os"
 	"path"
 	"sync"
+
+	"github.com/aws/aws-sdk-go/aws"
+	"github.com/aws/aws-sdk-go/service/s3/s3manager"
+	"github.com/google/uuid"
+	"github.com/rs/zerolog/log"
+	"gitlab.com/dreamteam-hack/hack041221/telegram-bot/pkg/types"
 )
 
-func process(v *JobMessage, uid uuid.UUID) error {
+func process(v *types.JobMessage, uid uuid.UUID) error {
 	videoDir, err := ioutil.TempDir(os.TempDir(), "video")
 	if err != nil {
 		l.
@@ -80,7 +82,7 @@ func process(v *JobMessage, uid uuid.UUID) error {
 			return
 		}
 
-		frameJob := &FrameMessage{
+		frameJob := &types.FrameMessage{
 			ChatID:    v.ChatID,
 			MessageID: v.MessageID,
 			FramesURL: uploadDir, // @todo
@@ -119,7 +121,7 @@ func process(v *JobMessage, uid uuid.UUID) error {
 			return
 		}
 
-		audioJob := &AudioMessage{
+		audioJob := &types.AudioMessage{
 			ChatID:    v.ChatID,
 			MessageID: v.MessageID,
 			AudioURL:  uploadKey,
