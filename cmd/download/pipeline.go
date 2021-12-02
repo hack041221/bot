@@ -43,54 +43,54 @@ func process(v *types.JobMessage, uid uuid.UUID) error {
 	wg.Add(2)
 
 	go func() {
-		if err := ffmpegExtractFrames(f, frameDir); err != nil {
-			log.Error().Err(err).Msg("ffmpegExtractFrames")
-			wg.Done()
-			return
-		}
-
-		uploadDir := fmt.Sprintf("frame/%s", uid.String())
-		var objects []s3manager.BatchUploadObject
-
-		files, err := ioutil.ReadDir(frameDir)
-		if err != nil {
-			log.Error().Err(err).Msg("ioutil.ReadDir")
-			wg.Done()
-			return
-		}
-
-		for _, fi := range files {
-			f, err := os.Open(fi.Name())
-			if err != nil {
-				log.Error().Err(err).Msg("os.Open")
-				continue
-			}
-			uploadKey := fmt.Sprintf("%s/%s", uploadDir, filepath.Base(fi.Name()))
-			objects = append(objects, s3manager.BatchUploadObject{
-				Object: &s3manager.UploadInput{
-					Key:    aws.String(uploadKey),
-					Bucket: aws.String(c.AwsBucket),
-					Body:   f,
-				},
-			})
-		}
-
-		iter := &s3manager.UploadObjectsIterator{Objects: objects}
-		if err := uploader.UploadWithIterator(aws.BackgroundContext(), iter); err != nil {
-			log.Error().Err(err).Msg("uploader.UploadWithIterator")
-			wg.Done()
-			return
-		}
-
-		frameJob := &types.FrameMessage{
-			ChatID:    v.ChatID,
-			MessageID: v.MessageID,
-			FramesURL: uploadDir, // @todo
-			VideoID:   uid.String(),
-		}
-		if err := frameQueue.Send(frameJob); err != nil {
-			log.Error().Err(err).Msg("frameQueue.Send error")
-		}
+		//if err := ffmpegExtractFrames(f, frameDir); err != nil {
+		//	log.Error().Err(err).Msg("ffmpegExtractFrames")
+		//	wg.Done()
+		//	return
+		//}
+		//
+		//uploadDir := fmt.Sprintf("frame/%s", uid.String())
+		//var objects []s3manager.BatchUploadObject
+		//
+		//files, err := ioutil.ReadDir(frameDir)
+		//if err != nil {
+		//	log.Error().Err(err).Msg("ioutil.ReadDir")
+		//	wg.Done()
+		//	return
+		//}
+		//
+		//for _, fi := range files {
+		//	f, err := os.Open(fi.Name())
+		//	if err != nil {
+		//		log.Error().Err(err).Msg("os.Open")
+		//		continue
+		//	}
+		//	uploadKey := fmt.Sprintf("%s/%s", uploadDir, filepath.Base(fi.Name()))
+		//	objects = append(objects, s3manager.BatchUploadObject{
+		//		Object: &s3manager.UploadInput{
+		//			Key:    aws.String(uploadKey),
+		//			Bucket: aws.String(c.AwsBucket),
+		//			Body:   f,
+		//		},
+		//	})
+		//}
+		//
+		//iter := &s3manager.UploadObjectsIterator{Objects: objects}
+		//if err := uploader.UploadWithIterator(aws.BackgroundContext(), iter); err != nil {
+		//	log.Error().Err(err).Msg("uploader.UploadWithIterator")
+		//	wg.Done()
+		//	return
+		//}
+		//
+		//frameJob := &types.FrameMessage{
+		//	ChatID:    v.ChatID,
+		//	MessageID: v.MessageID,
+		//	FramesURL: uploadDir, // @todo
+		//	VideoID:   uid.String(),
+		//}
+		//if err := frameQueue.Send(frameJob); err != nil {
+		//	log.Error().Err(err).Msg("frameQueue.Send error")
+		//}
 
 		wg.Done()
 	}()
