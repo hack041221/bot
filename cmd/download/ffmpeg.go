@@ -18,7 +18,7 @@ func ffmpegExtractAudio(src, dst string) error {
 
 // ffmpeg -i bup.webm -pix_fmt bgr8 -r 1/1 ./frames/%5d.jpg
 func ffmpegExtractFrames(src, dstDir string) error {
-	cmd := fmt.Sprintf("-i %s -pix_fmt bgr8 -r 1/1 %s", src, dstDir) + "%5d.jpg"
+	cmd := fmt.Sprintf("-i %s -pix_fmt bgr8 -r 1/1 %s/", src, dstDir) + "%5d.jpg"
 	out, err := ffmpeg(cmd)
 	if err != nil {
 		l.
