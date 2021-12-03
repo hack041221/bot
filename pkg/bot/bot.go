@@ -3,7 +3,6 @@ package bot
 import (
 	"encoding/json"
 	"fmt"
-	"strings"
 	"time"
 
 	"github.com/rs/zerolog/log"
@@ -67,10 +66,18 @@ func (b *bot) createMessageBody(s *types.StateMessage) string {
 		msgBody += fmt.Sprintf("Ratio: %s\n%s\n\n", cast.ToString(s.Ratio), s.Desc)
 	}
 	msgBody += "--------\n"
-	msgBody += fmt.Sprintf("LOC: %s\n\n", strings.Join(s.Result.Ner.LOC, ", "))
-	msgBody += fmt.Sprintf("PER: %s\n\n", strings.Join(s.Result.Ner.PER, ", "))
-	msgBody += fmt.Sprintf("ORG: %s\n\n", strings.Join(s.Result.Ner.ORG, ", "))
+	msgBody += fmt.Sprintf("LOC: %s\n\n", b.formatNer(s.Result.Ner.LOC))
+	msgBody += fmt.Sprintf("PER: %s\n\n", b.formatNer(s.Result.Ner.PER))
+	msgBody += fmt.Sprintf("ORG: %s\n\n", b.formatNer(s.Result.Ner.ORG))
 	return msgBody
+}
+
+func (b *bot) formatNer(tags []types.Tag) string {
+	msg := ""
+	for _, t := range tags {
+		msg += fmt.Sprintf("%s = %s", t.Tag, cast.ToString(t.WT))
+	}
+	return msg
 }
 
 func (b *bot) Listen() {
