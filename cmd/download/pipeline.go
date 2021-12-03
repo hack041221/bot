@@ -60,14 +60,14 @@ func process(v *types.JobMessage, uid uuid.UUID) error {
 		}
 
 		for _, fi := range files {
-			p := fmt.Sprintf("%s", frameDir, fi.Name())
+			p := fmt.Sprintf("%s/%s", frameDir, fi.Name())
 			log.Info().Msgf("%s", p)
 			f, err := os.Open(p)
 			if err != nil {
 				log.Error().Err(err).Msg("os.Open")
 				continue
 			}
-			uploadKey := fmt.Sprintf("%s/%s", uploadDir, filepath.Base(fi.Name()))
+			uploadKey := fmt.Sprintf("%s/%s", uploadDir, fi.Name())
 			objects = append(objects, s3manager.BatchUploadObject{
 				Object: &s3manager.UploadInput{
 					Key:    aws.String(uploadKey),
