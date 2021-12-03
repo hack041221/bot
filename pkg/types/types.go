@@ -3,12 +3,18 @@ package types
 type Summary struct {
 	Ratio float64 `json:"ratio"`
 	Desc  string  `json:"desc"`
+	TS    int     `json:"ts`
 }
 
 type Ner struct {
-	LOC []string `json:"LOC"`
-	PER []string `json:"PER"`
-	ORG []string `json:"ORG"`
+	LOC []Tag `json:"LOC"`
+	PER []Tag `json:"PER"`
+	ORG []Tag `json:"ORG"`
+}
+
+type Tag struct {
+	Tag string  `json:"tag"`
+	WT  float64 `json:"wt"`
 }
 
 type Result struct {
