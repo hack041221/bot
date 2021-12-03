@@ -22,14 +22,14 @@ variable "deployment" {
     })
   })
   default = {
-    replicas = 2,
+    replicas = 1,
     requests = {
-      cpu    = "400m"
-      memory = "256Mi"
+      cpu    = "2"
+      memory = "512Mi"
     }
     limits   = {
-      cpu    = "400m"
-      memory = "256Mi"
+      cpu    = "2"
+      memory = "512Mi"
     }
   }
 }
