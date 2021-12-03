@@ -68,7 +68,7 @@ func (b *bot) createMessageBody(s *types.StateMessage) string {
 		msgBody += fmt.Sprintf("Ratio: %s\nTimestamp: %d\n%s\n\n", cast.ToString(s.Ratio), s.TS, s.Desc)
 	}
 	msgBody += "--------\n"
-	msgBody += fmt.Sprintf("LOC: %s\n\n", b.formatNer(s.Result.Ner.LOC))
+	msgBody += fmt.Sprintf("LOC:\n%s\n\n", b.formatNer(s.Result.Ner.LOC))
 	msgBody += fmt.Sprintf("PER: %s\n\n", b.formatNer(s.Result.Ner.PER))
 	msgBody += fmt.Sprintf("ORG: %s\n\n", b.formatNer(s.Result.Ner.ORG))
 	return msgBody
@@ -77,7 +77,7 @@ func (b *bot) createMessageBody(s *types.StateMessage) string {
 func (b *bot) formatNer(tags []types.Tag) string {
 	msg := ""
 	for _, t := range tags {
-		msg += fmt.Sprintf("%s = %s", t.Tag, cast.ToString(t.WT))
+		msg += fmt.Sprintf("%s = %s\n", t.Tag, cast.ToString(t.WT))
 	}
 	return msg
 }
