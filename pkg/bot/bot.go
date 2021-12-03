@@ -34,6 +34,7 @@ type bot struct {
 func (b *bot) handleState(msg []byte) error {
 	s := &types.StateMessage{}
 	if err := json.Unmarshal(msg, s); err != nil {
+		log.Error().Err(err).Msg("json.Unmarshal")
 		return err
 	}
 
