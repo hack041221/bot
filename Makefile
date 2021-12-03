@@ -1,31 +1,30 @@
+.DEFAULT_GOAL := help
+
+COMPOSE := docker-compose
+COMPOSE_FILES := -f docker-compose.yml
+DOCKER_COMPOSE := $(COMPOSE) $(COMPOSE_FILES)
 CGO_ENABLED=0
 GO_BUILD_FLAGS=-ldflags "-extldflags '-static'"
+GO_BUILD := CGO_ENABLED=$(CGO_ENABLED) go build $(GO_BUILD_FLAGS)
 
-.PHONY: docker-build-bot
-docker-build-bot:
-	docker build -t hack-bot -f bot.dockerfile .
+########################### сборка образа с docker-compose
 
-.PHONY: docker-build-downloader
-docker-build-downloader:
-	docker build -t hack-downloader -f downloader.dockerfile .
+.PHONY: run
+run: ## docker-compose up
+	$(DOCKER_COMPOSE) up
+
+########################### документация makefile
+
+.PHONY: help
+help: ## show this help
+	@egrep -h '\s##\s' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
+
+########################### используется в docker файлах для сборки проектов
 
 .PHONY: build-bot
-build-bot:
-	CGO_ENABLED=$(CGO_ENABLED) go build $(GO_BUILD_FLAGS) -o bin/app ./cmd/app
+build-bot: ## compile telegram bot
+	$(GO_BUILD) -o bin/app ./cmd/app
 
 .PHONY: build-downloader
-build-downloader:
-	CGO_ENABLED=$(CGO_ENABLED) go build $(GO_BUILD_FLAGS) -o bin/download ./cmd/download
-
-.PHONY: clean
-clean:
-	rm -rf ./bin/app
-
-.PHONY: format
-format:
-	go fmt $(go list ./... | grep -v /vendor/)
-
-.PHONY: test
-test:
-	go vet $(go list ./... | grep -v /vendor/)
-	go test -race $(go list ./... | grep -v /vendor/)
+build-downloader: ## compile downloader
+	$(GO_BUILD) -o bin/download ./cmd/download

@@ -1,0 +1,23 @@
+version: '3.9'
+
+x-networks: &x-networks
+  networks:
+    - backend
+
+networks:
+  backend:
+
+services:
+  bot:
+    <<: *x-networks
+    container_name: hack_bot
+    build:
+      context: ./
+      dockerfile: bot.dockerfile
+
+  downloader:
+    <<: *x-networks
+    container_name: hack_downloader
+    build:
+      context: ./
+      dockerfile: downloader.dockerfile
