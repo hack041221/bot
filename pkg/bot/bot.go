@@ -65,7 +65,7 @@ func (b *bot) handleState(msg []byte) error {
 func (b *bot) createMessageBody(s *types.StateMessage) string {
 	msgBody := ""
 	for _, s := range s.Result.Summary {
-		msgBody += fmt.Sprintf("Ratio: %s\n%s\n\n", cast.ToString(s.Ratio), s.Desc)
+		msgBody += fmt.Sprintf("Ratio: %s\nTimestamp: %d\n%s\n\n", cast.ToString(s.Ratio), s.TS, s.Desc)
 	}
 	msgBody += "--------\n"
 	msgBody += fmt.Sprintf("LOC: %s\n\n", b.formatNer(s.Result.Ner.LOC))

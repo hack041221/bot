@@ -3,7 +3,7 @@ package types
 type Summary struct {
 	Ratio float64 `json:"ratio"`
 	Desc  string  `json:"desc"`
-	TS    int     `json:"ts`
+	TS    int     `json:"ts"`
 }
 
 type Ner struct {
