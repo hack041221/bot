@@ -1,10 +1,27 @@
 package types
 
+type Summary struct {
+	Ratio float64 `json:"ratio"`
+	Desc  string  `json:"desc"`
+}
+
+type Ner struct {
+	LOC []string `json:"loc"`
+	PER []string `json:"per"`
+	ORG []string `json:"org"`
+}
+
+type Result struct {
+	Summary Summary `json:"summary"`
+	Ner     Ner     `json:"ner"`
+}
+
 type StateMessage struct {
 	ChatID    int64  `json:"chat_id"`
 	MessageID int    `json:"message_id"`
 	URL       string `json:"url"`
 	Error     string `json:"error"`
+	Result    Result `json:"result"`
 	VideoID   string `json:"video_id"`
 }
 

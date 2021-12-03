@@ -48,7 +48,12 @@ func (b *bot) handleState(msg []byte) error {
 		replyMsg = fmt.Sprintf("Произошла ошибка при обработке видео: %s", s.Error)
 		log.Info().Msgf(replyMsg)
 	} else {
-		replyMsg = fmt.Sprintf("Видео готово: %s", s.URL)
+		body, err := json.Marshal(s.Result)
+		if err != nil {
+			log.Error().Err(err).Msg("json.Marshal")
+		} else {
+			replyMsg = fmt.Sprintf("Видео готово: %s", body)
+		}
 	}
 	if _, err := b.tbot.Reply(replyRecipient, replyMsg); err != nil {
 		log.Error().Err(err).Msgf("failed to send reply %s", s.URL)
