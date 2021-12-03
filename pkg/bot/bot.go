@@ -43,6 +43,7 @@ func (b *bot) handleState(msg []byte) error {
 		Chat: &tb.Chat{ID: s.ChatID},
 	}
 
+	log.Debug().Msgf("handleState = %s", s)
 	var replyMsg string
 	if len(s.Error) > 0 {
 		replyMsg = fmt.Sprintf("Произошла ошибка при обработке видео: %s", s.Error)
