@@ -12,8 +12,8 @@ type Ner struct {
 }
 
 type Result struct {
-	Summary Summary `json:"summary"`
-	Ner     Ner     `json:"ner"`
+	Summary []Summary `json:"summary"`
+	Ner     Ner       `json:"ner"`
 }
 
 type StateMessage struct {
