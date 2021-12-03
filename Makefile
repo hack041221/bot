@@ -1,6 +1,14 @@
 CGO_ENABLED=0
 GO_BUILD_FLAGS=-ldflags "-extldflags '-static'"
 
+.PHONY: docker-build-bot
+docker-build-bot:
+	docker build -t hack-bot -f bot.dockerfile .
+
+.PHONY: docker-build-downloader
+docker-build-downloader:
+	docker build -t hack-downloader -f downloader.dockerfile .
+
 .PHONY: build-bot
 build-bot:
 	CGO_ENABLED=$(CGO_ENABLED) go build $(GO_BUILD_FLAGS) -o bin/app ./cmd/app

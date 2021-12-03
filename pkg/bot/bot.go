@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/rs/zerolog/log"
+	"github.com/spf13/cast"
 	"gitlab.com/dreamteam-hack/hack041221/telegram-bot/pkg/types"
 	tb "gopkg.in/tucnak/telebot.v2"
 )
@@ -51,22 +52,25 @@ func (b *bot) handleState(msg []byte) error {
 		replyMsg = fmt.Sprintf("Произошла ошибка при обработке видео: %s", s.Error)
 		log.Info().Msgf(replyMsg)
 	} else {
-		msgBody := ""
-		for _, s := range s.Result.Summary {
-			msgBody += fmt.Sprintf("Ratio: %s\n%s\n\n", s.Ratio, s.Desc)
-		}
-		msgBody += "--------\n"
-		msgBody += fmt.Sprintf("LOC: %s\n\n", strings.Join(s.Result.Ner.LOC, ", "))
-		msgBody += fmt.Sprintf("PER: %s\n\n", strings.Join(s.Result.Ner.PER, ", "))
-		msgBody += fmt.Sprintf("ORG: %s\n\n", strings.Join(s.Result.Ner.ORG, ", "))
-
-		replyMsg = fmt.Sprintf(fmt.Sprintf("Видео готово:\n\n%s", msgBody))
+		replyMsg = fmt.Sprintf(fmt.Sprintf("Видео готово:\n\n%s", b.createMessageBody(s)))
 	}
 	if _, err := b.tbot.Reply(replyRecipient, replyMsg); err != nil {
 		log.Error().Err(err).Msgf("failed to send reply %s", s.URL)
 	}
 
 	return nil
+}
+
+func (b *bot) createMessageBody(s *types.StateMessage) string {
+	msgBody := ""
+	for _, s := range s.Result.Summary {
+		msgBody += fmt.Sprintf("Ratio: %s\n%s\n\n", cast.ToString(s.Ratio), s.Desc)
+	}
+	msgBody += "--------\n"
+	msgBody += fmt.Sprintf("LOC: %s\n\n", strings.Join(s.Result.Ner.LOC, ", "))
+	msgBody += fmt.Sprintf("PER: %s\n\n", strings.Join(s.Result.Ner.PER, ", "))
+	msgBody += fmt.Sprintf("ORG: %s\n\n", strings.Join(s.Result.Ner.ORG, ", "))
+	return msgBody
 }
 
 func (b *bot) Listen() {

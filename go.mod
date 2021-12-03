@@ -8,6 +8,7 @@ require (
 	github.com/google/uuid v1.3.0
 	github.com/joho/godotenv v1.4.0
 	github.com/rs/zerolog v1.26.0
+	github.com/spf13/cast v1.4.1
 	github.com/stretchr/testify v1.7.0
 	gopkg.in/tucnak/telebot.v2 v2.4.1
 )
