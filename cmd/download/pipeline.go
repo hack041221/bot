@@ -60,6 +60,7 @@ func process(v *types.JobMessage, uid uuid.UUID) error {
 		}
 
 		for _, fi := range files {
+			log.Info().Msgf("%s", fi.Name())
 			f, err := os.Open(fi.Name())
 			if err != nil {
 				log.Error().Err(err).Msg("os.Open")
