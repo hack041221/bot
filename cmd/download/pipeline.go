@@ -84,6 +84,7 @@ func process(v *types.JobMessage, uid uuid.UUID) error {
 			return
 		}
 
+		log.Info().Msg("frame upload ok")
 		frameJob := &types.FrameMessage{
 			ChatID:    v.ChatID,
 			MessageID: v.MessageID,
@@ -94,6 +95,7 @@ func process(v *types.JobMessage, uid uuid.UUID) error {
 			log.Error().Err(err).Msg("frameQueue.Send error")
 		}
 
+		log.Info().Msg("send frame message ok")
 		wg.Done()
 	}()
 
