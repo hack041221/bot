@@ -3,6 +3,7 @@ package bot
 import (
 	"encoding/json"
 	"fmt"
+	"strings"
 	"time"
 
 	"github.com/rs/zerolog/log"
@@ -50,12 +51,16 @@ func (b *bot) handleState(msg []byte) error {
 		replyMsg = fmt.Sprintf("Произошла ошибка при обработке видео: %s", s.Error)
 		log.Info().Msgf(replyMsg)
 	} else {
-		body, err := json.Marshal(s.Result)
-		if err != nil {
-			log.Error().Err(err).Msg("json.Marshal")
-		} else {
-			replyMsg = fmt.Sprintf("Видео готово: %s", body)
+		msgBody := ""
+		for _, s := range s.Result.Summary {
+			msgBody += fmt.Sprintf("Ratio: %s\n%s\n\n", s.Ratio, s.Desc)
 		}
+		msgBody += "--------\n"
+		msgBody += fmt.Sprintf("LOC: %s\n\n", strings.Join(s.Result.Ner.LOC, ", "))
+		msgBody += fmt.Sprintf("PER: %s\n\n", strings.Join(s.Result.Ner.PER, ", "))
+		msgBody += fmt.Sprintf("ORG: %s\n\n", strings.Join(s.Result.Ner.ORG, ", "))
+
+		replyMsg = fmt.Sprintf(fmt.Sprintf("Видео готово:\n\n%s", msgBody))
 	}
 	if _, err := b.tbot.Reply(replyRecipient, replyMsg); err != nil {
 		log.Error().Err(err).Msgf("failed to send reply %s", s.URL)
