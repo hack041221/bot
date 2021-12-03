@@ -116,6 +116,7 @@ func (b *bot) Init() error {
 }
 
 func (b *bot) handleText(m *tb.Message) {
+	log.Info().Msgf("new message: %s", m.Text)
 	// 	for _, l := range hasYoutubeLink(m.Text) {
 	// 		msg := fmt.Sprintf("Обнаружено youtube видео (%s), начата обработка", l)
 	// 		if _, err := b.tbot.Reply(m, msg); err != nil {
