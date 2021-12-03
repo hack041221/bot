@@ -22,7 +22,7 @@ variable "deployment" {
     })
   })
   default = {
-    replicas = 1,
+    replicas = 2,
     requests = {
       cpu    = "2"
       memory = "512Mi"

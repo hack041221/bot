@@ -17,6 +17,17 @@ module "bot" {
     job_url        = var.job_url
     state_url      = var.state_url
   }
+  deployment = {
+    replicas = 2,
+    requests = {
+      cpu    = "2"
+      memory = "512Mi"
+    }
+    limits   = {
+      cpu    = "2"
+      memory = "512Mi"
+    }
+  }
 }
 
 module "downloader" {
@@ -39,5 +50,16 @@ module "downloader" {
     state_url      = var.state_url
     frame_url      = var.frame_url
     audio_url      = var.audio_url
+  }
+  deployment = {
+    replicas = 2,
+    requests = {
+      cpu    = "4"
+      memory = "512Mi"
+    }
+    limits   = {
+      cpu    = "4"
+      memory = "512Mi"
+    }
   }
 }
