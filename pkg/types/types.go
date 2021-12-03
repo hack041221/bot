@@ -6,9 +6,9 @@ type Summary struct {
 }
 
 type Ner struct {
-	LOC []string `json:"loc"`
-	PER []string `json:"per"`
-	ORG []string `json:"org"`
+	LOC []string `json:"LOC"`
+	PER []string `json:"PER"`
+	ORG []string `json:"ORG"`
 }
 
 type Result struct {
